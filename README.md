@@ -38,7 +38,7 @@ The app starts on `http://localhost:8080`. Flyway runs the migrations automatica
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@rcsl.com",
+    "email": "admin@note.com",
     "password": "admin123"
   }'
 ```
@@ -58,7 +58,7 @@ Response:
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "user@rcsl.com",
+    "email": "user@note.com",
     "password": "user1234"
   }'
 ```
