@@ -1,0 +1,8 @@
+CREATE TABLE roles (
+    id          BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    built_in    BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL
+);
