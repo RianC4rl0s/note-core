@@ -4,6 +4,7 @@ import com.note_core.admin.dto.AssignPermissionsRequest;
 import com.note_core.admin.dto.AssignRolesRequest;
 import com.note_core.admin.dto.CreatePermissionRequest;
 import com.note_core.admin.dto.CreateRoleRequest;
+import com.note_core.admin.dto.CreateUserRequest;
 import com.note_core.admin.dto.PermissionResponse;
 import com.note_core.admin.dto.RoleResponse;
 import com.note_core.admin.dto.UpdateRoleRequest;
@@ -21,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -140,5 +142,26 @@ public class AdminController {
     public ResponseEntity<UserResponse> assignPlanToUser(@PathVariable UUID id,
                                                         @Valid @RequestBody AssignPlanRequest request) {
         return ResponseEntity.ok(planService.assignPlanToUser(id, request.planId()));
+    }
+
+    // ---- User management ----
+
+    @PostMapping("/users")
+    @PreAuthorize(PreAuth.USER_WRITE)
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createUser(request));
+    }
+
+    @PatchMapping("/users/{id}/active")
+    @PreAuthorize(PreAuth.USER_WRITE)
+    public ResponseEntity<UserResponse> toggleUserActive(@PathVariable UUID id) {
+        return ResponseEntity.ok(adminService.toggleUserActive(id));
+    }
+
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize(PreAuth.USER_WRITE)
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+        adminService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
