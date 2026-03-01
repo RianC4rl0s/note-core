@@ -6,6 +6,8 @@ import com.note_core.auth.dto.TokenResponse;
 import com.note_core.common.exception.BusinessException;
 import com.note_core.security.JwtTokenProvider;
 import com.note_core.security.UserPrincipal;
+import com.note_core.plan.Plan;
+import com.note_core.plan.PlanRepository;
 import com.note_core.user.Role;
 import com.note_core.user.RoleRepository;
 import com.note_core.user.User;
@@ -29,6 +31,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PlanRepository planRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtDecoder jwtDecoder;
@@ -36,12 +39,14 @@ public class AuthService {
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
                        RoleRepository roleRepository,
+                       PlanRepository planRepository,
                        PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtTokenProvider,
                        JwtDecoder jwtDecoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.planRepository = planRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.jwtDecoder = jwtDecoder;
@@ -72,6 +77,9 @@ public class AuthService {
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new BusinessException("Default role not found"));
 
+        Plan freePlan = planRepository.findByName("FREE")
+                .orElseThrow(() -> new BusinessException("Default plan not found"));
+
         User user = new User();
         user.setName(request.name());
         user.setEmail(request.email());
@@ -79,6 +87,7 @@ public class AuthService {
         user.setPhone(request.phone());
         user.setBirthDate(request.birthDate());
         user.setRoles(Set.of(userRole));
+        user.setPlan(freePlan);
 
         user = userRepository.save(user);
 

@@ -1,5 +1,7 @@
 package com.note_core.config;
 
+import com.note_core.plan.Plan;
+import com.note_core.plan.PlanRepository;
 import com.note_core.user.Role;
 import com.note_core.user.RoleRepository;
 import com.note_core.user.User;
@@ -21,13 +23,16 @@ public class DataSeeder implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PlanRepository planRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataSeeder(UserRepository userRepository,
                       RoleRepository roleRepository,
+                      PlanRepository planRepository,
                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.planRepository = planRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -68,11 +73,15 @@ public class DataSeeder implements ApplicationRunner {
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new IllegalStateException("USER role not found — run migrations first"));
 
+        Plan freePlan = planRepository.findByName("FREE")
+                .orElseThrow(() -> new IllegalStateException("FREE plan not found — run migrations first"));
+
         User user = new User();
         user.setName("Default User");
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode("user1234"));
         user.setRoles(Set.of(userRole));
+        user.setPlan(freePlan);
 
         userRepository.save(user);
         log.info("Seeded default user: {}", email);
